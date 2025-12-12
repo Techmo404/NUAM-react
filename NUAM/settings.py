@@ -36,11 +36,12 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'accounts',
-    'calificaciones',
+    'calificaciones.apps.CalificacionesConfig',
     'certificados',
-    'reportes',
-    'auditorias',
+    'reportes.apps.ReportesConfig',
+    'auditorias.apps.AuditoriasConfig',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
