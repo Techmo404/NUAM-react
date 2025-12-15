@@ -3,18 +3,38 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User
 
-# accounts/serializers.py
+
+# ============================
+# LOGIN SERIALIZER
+# ============================
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
+    username = serializers.CharField()  # puede ser username o email
     password = serializers.CharField(write_only=True)
 
     def validate(self, data):
-        user = authenticate(username=data["username"], password=data["password"])
+        identifier = data.get("username")
+        password = data.get("password")
+
+        # 🔎 Detectar si es email
+        if "@" in identifier:
+            try:
+                user_obj = User.objects.get(email__iexact=identifier)
+                username = user_obj.username
+            except User.DoesNotExist:
+                raise serializers.ValidationError("Credenciales incorrectas.")
+        else:
+            username = identifier
+
+        # 🔐 Autenticación real
+        user = authenticate(username=username, password=password)
+
         if not user:
             raise serializers.ValidationError("Credenciales incorrectas.")
 
-        self.user = user  # 👈 guardamos el user aquí
+        # 👤 Guardamos el user (lo usas en views para auditoría)
+        self.user = user
 
+        # 🔑 JWT
         refresh = RefreshToken.for_user(user)
 
         return {
@@ -29,7 +49,9 @@ class LoginSerializer(serializers.Serializer):
         }
 
 
-
+# ============================
+# USER SERIALIZER
+# ============================
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

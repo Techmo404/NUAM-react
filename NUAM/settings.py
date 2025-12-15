@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'certificados',
     'reportes.apps.ReportesConfig',
     'auditorias.apps.AuditoriasConfig',
+    "mensajes.apps.MensajesConfig",
+
 ]
 
 

@@ -7,6 +7,7 @@ class User(AbstractUser):
         ('EMP', 'Empleado Nuam'),
     )
 
+    email = models.EmailField(unique=True) 
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='EMP')
 
     def __str__(self):
